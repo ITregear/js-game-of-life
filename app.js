@@ -96,6 +96,7 @@ function applyRules(populatedGrid, countedGrid) {
     for (let i = 0; i < populatedGrid.length; i++) {
         for (let j = 0; j < populatedGrid[0].length; j++) {
             
+            // Assume current cell dies unless rule keeps it alive
             let currentState = populatedGrid[i][j];
             let currentNeighbourCount = countedGrid[i][j];
             let newState = 0;
@@ -123,21 +124,42 @@ function applyRules(populatedGrid, countedGrid) {
     return newPopulatedGrid;
 }
 
+function printGrid(grid) {
+    console.clear();
 
-function main() {
+    for (let i = 0; i < grid.length; i++) {
+        let row = '';
+        for (let j = 0; j < grid[0].length; j++) {
+            row += grid[i][j] === 1 ? '▓' : '░';
+        }
+        console.log(row);
+    }
+}
 
-    const grid = createGrid(10, 10);
-    const populatedGrid = populateGrid(grid);
-    const countedGrid = countNeighbours(populatedGrid);
-    const newPopulatedGrid = applyRules(populatedGrid, countedGrid);
 
-    console.log(grid);
-    console.log("");
-    console.log(populatedGrid);
-    console.log("");
-    console.log(countedGrid);
-    console.log("");
-    console.log(newPopulatedGrid);
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function main() {
+
+    // Create empty grid and then populate it with seed
+    const grid = createGrid(10, 50);
+    let populatedGrid = populateGrid(grid);
+    
+    const generations = 100;
+
+    for (let i = 0; i < generations; i++) {
+        printGrid(populatedGrid);
+        console.log(`Generation ${i}`)
+        await sleep(100);
+
+        let countedGrid = countNeighbours(populatedGrid);
+        populatedGrid = applyRules(populatedGrid, countedGrid);
+
+    }
+    printGrid(populatedGrid);
 
 
 }
