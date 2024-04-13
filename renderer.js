@@ -124,7 +124,7 @@ function applyRules(populatedGrid, countedGrid) {
     return newPopulatedGrid;
 }
 
-function printGrid(grid) {
+function printGridToConsole(grid) {
     console.clear();
 
     for (let i = 0; i < grid.length; i++) {
@@ -136,6 +136,23 @@ function printGrid(grid) {
     }
 }
 
+function printGridToApp(grid) {
+    gridContainer.innerHTML = '';
+    const table = document.createElement('table');
+    for (let i = 0; i < grid.length; i++) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < grid[i].length; j++) {
+            const td = document.createElement('td');
+            td.style.width = '20px';
+            td.style.height = '20px';
+            td.style.backgroundColor = grid[i][j] === 1 ? 'black' : 'white';
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+    gridContainer.appendChild(table);
+}
+
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -145,25 +162,27 @@ function sleep(ms) {
 async function main() {
 
     // Create empty grid and then populate it with seed
-    const grid = createGrid(10, 50);
+    const grid = createGrid(25, 150);
     let populatedGrid = populateGrid(grid);
     
-    const generations = 100;
+    const generations = 10000;
 
     for (let i = 0; i < generations; i++) {
-        printGrid(populatedGrid);
+        printGridToApp(populatedGrid);
         console.log(`Generation ${i}`)
-        await sleep(100);
+        await sleep(10);
 
         let countedGrid = countNeighbours(populatedGrid);
         populatedGrid = applyRules(populatedGrid, countedGrid);
 
     }
-    printGrid(populatedGrid);
-
+    printGridToApp(populatedGrid);
 
 }
 
-if (require.main === module) {
+let gridContainer;
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    gridContainer = document.getElementById('grid');
     main();
-}
+});
