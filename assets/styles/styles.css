@@ -40,7 +40,7 @@ body {
   /* Slider styling */
   input[type=range] {
     -webkit-appearance: none; /* Override default appearance */
-    width: 50%; /* Set a width to the slider */
+    width: 90%; /* Set a width to the slider */
     margin: 20px 0; /* Margin around the slider */
     background-color: #555; /* Slider background */
     border-radius: 20px;

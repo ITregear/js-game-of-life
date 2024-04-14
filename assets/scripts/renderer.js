@@ -232,14 +232,15 @@ function updateChart(generations, numberOfAliveCells) {
             label: 'Number of Alive Cells',
             data: numberOfAliveCells,
             fill: false,
-            borderColor: getRandomColor() // Use the same function name as defined above
+            borderColor: getRandomColor(),
+            tension: 0.1
         }];
 
         // Construct the chart with the datasets and labels
         window.aliveCellsChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: generations,
+                label: generations,
                 datasets: datasets
             },
             options: {
@@ -256,12 +257,15 @@ function updateChart(generations, numberOfAliveCells) {
         });
     } else {
         // Update the chart's dataset with new data and labels
-        window.aliveCellsChart.data.labels = generations;
+        console.log("1");
+        window.aliveCellsChart.data.label = generations;
+        console.log("2");
         window.aliveCellsChart.data.datasets[0].data = numberOfAliveCells;
+        console.log("3");
         window.aliveCellsChart.update();
+        console.log("4");
     }
 }
-
 
 
 // Global Variables
@@ -270,7 +274,6 @@ let populatedGrid;
 let sparseness = 0.5;
 let isPaused = false;
 let generationCount = 0;
-let currentRunIndex = 0;
 let generations = [];
 let cellCounts = [];
 
