@@ -218,6 +218,8 @@ function printGridToApp(grid) {
 function updateChart(generations, numberOfAliveCells) {
     const ctx = document.getElementById('aliveCellsChart').getContext('2d');
 
+    console.log("func start");
+
     // Function to generate random RGB colors
     function getRandomColor() { // Make sure this function name is consistent
         var r = Math.floor(Math.random() * 256);
@@ -226,7 +228,8 @@ function updateChart(generations, numberOfAliveCells) {
         return `rgb(${r}, ${g}, ${b})`;
     }
 
-    if (!window.aliveCellsChart) {
+    if (!window.populationChart) {
+        console.log("init");
         // Construct the datasets using the alive cell counts
         const datasets = [{
             label: 'Number of Alive Cells',
@@ -237,7 +240,7 @@ function updateChart(generations, numberOfAliveCells) {
         }];
 
         // Construct the chart with the datasets and labels
-        window.aliveCellsChart = new Chart(ctx, {
+        window.populationChart = new Chart(ctx, {
             type: 'line',
             data: {
                 label: generations,
@@ -257,13 +260,9 @@ function updateChart(generations, numberOfAliveCells) {
         });
     } else {
         // Update the chart's dataset with new data and labels
-        console.log("1");
-        window.aliveCellsChart.data.label = generations;
-        console.log("2");
-        window.aliveCellsChart.data.datasets[0].data = numberOfAliveCells;
-        console.log("3");
-        window.aliveCellsChart.update();
-        console.log("4");
+        window.populationChart.data.labels = generations;
+        window.populationChart.data.datasets[0].data = numberOfAliveCells;
+        window.populationChart.update();
     }
 }
 
