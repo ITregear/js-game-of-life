@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game of Life</title>
+    <link rel="stylesheet" href="./assets/styles/styles.css">
 </head>
 <body>
     <div id="grid"></div>
-    <script src="renderer.js"></script>
+    <div class="control-chart-container">
+        <div class="controls">
+            <button id="pauseBtn">Pause</button>
+            <button id="resetBtn">Reset</button>
+            <input type="range" id="sparsenessSlider" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <canvas id="aliveCellsChart"></canvas>
+    </div>
+    <script src="./assets/scripts/renderer.js"></script>
+    <script src="./assets/scripts/interface.js"></script>
 </body>
 </html>

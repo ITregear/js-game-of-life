@@ -1,0 +1,95 @@
+/* General styling for dark mode */
+body {
+    background-color: #2D2D2D; /* Dark background */
+    color: white; /* Light text */
+    font-family: Arial, sans-serif; /* Modern font */
+    text-align: center; /* Center aligns all content */
+  }
+  
+  /* Style the grid container */
+  #grid {
+    margin: 20px auto; /* Centering the grid and adding some margin */
+  }
+  
+  /* Styling for the buttons and sliders */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Individual button styling */
+  button {
+    background-color: #333; /* Darker grey background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for larger click area and spacing */
+    margin-top: 10px; /* Space between buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+  }
+  
+  /* Hover effect for buttons */
+  button:hover {
+    background-color: #444; /* Lighter grey background on hover */
+  }
+  
+  /* Slider styling */
+  input[type=range] {
+    -webkit-appearance: none; /* Override default appearance */
+    width: 50%; /* Set a width to the slider */
+    margin: 20px 0; /* Margin around the slider */
+    background-color: #333; /* Slider background */
+    border-radius: 20px;
+  }
+  
+  /* Slider thumb styling */
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px; /* Width of the thumb */
+    height: 25px; /* Height of the thumb */
+    border-radius: 50%; /* Make it circular */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+  
+  /* Styling for the slider thumb for Firefox */
+  input[type=range]::-moz-range-thumb {
+    width: 25px; /* Width of the thumb */
+    height: 25px; /* Height of the thumb */
+    border: none; /* No border */
+    border-radius: 50%; /* Make it circular */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+
+  .control-chart-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin: 20px;
+}
+
+.controls {
+    flex-basis: 30%; /* Takes up 30% of the flex container's space */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align controls */
+    padding: 10px;
+    background: #333; /* Optional: adds background color */
+    border-radius: 10px;
+    margin-right: 20px; /* Optional: adds some space between controls and chart */
+}
+
+#aliveCellsChart {
+    flex: 2;
+    flex-basis: 70%; /* Takes up the rest 70% of the space */
+    padding: 5px;
+    background: #555; /* Optional: adds background color */
+    border-radius: 10px;
+    max-width: 90%;
+}

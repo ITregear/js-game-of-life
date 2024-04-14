@@ -1,3 +1,5 @@
+const Chart = require('chart.js/auto').Chart;
+
 /*
 Game of Life Simulation
 
@@ -15,7 +17,6 @@ Must be a seed to begin.
 
 */
 
-
 function createGrid(rows, cols) {
 
     // Create an grid of zeroes with rows and columns defined by rows, cols
@@ -29,7 +30,7 @@ function createGrid(rows, cols) {
 }
 
 
-function populateGrid(emptyGrid) {
+function populateGrid(emptyGrid, sparseness = 0.5) {
 
     // Accepts empty (or populated) grid, and creates a new grid with randomly populated 0 or 1
     
@@ -37,7 +38,7 @@ function populateGrid(emptyGrid) {
 
     for (let i = 0; i < populatedGrid.length; i++) {
         for (let j = 0; j < populatedGrid[i].length; j++) {
-            populatedGrid[i][j] = Math.floor(Math.random() * 2); 
+            populatedGrid[i][j] = Math.random() < sparseness ? 1 : 0; 
         }
     }
     return populatedGrid;
@@ -71,6 +72,20 @@ function countNeighbours(populatedGrid) {
 
     return countedGrid;
 
+}
+
+
+function countPopulation(populatedGrid) {
+
+    let totalCount = 0;
+
+    for (let i = 0; i < populatedGrid.length; i++) {
+        for (let j = 0; j < populatedGrid[0].length; j++) {
+            totalCount += populatedGrid[i][j];
+        }
+    }
+
+    return totalCount;
 }
 
 
@@ -124,17 +139,35 @@ function applyRules(populatedGrid, countedGrid) {
     return newPopulatedGrid;
 }
 
-function printGridToConsole(grid) {
-    console.clear();
 
-    for (let i = 0; i < grid.length; i++) {
-        let row = '';
-        for (let j = 0; j < grid[0].length; j++) {
-            row += grid[i][j] === 1 ? '▓' : '░';
-        }
-        console.log(row);
+function runGeneration() {
+    if (!isPaused) {
+        generationCount += 1;
+        generations.push(generationCount);
+        
+        let countedGrid = countNeighbours(populatedGrid);
+        populatedGrid = applyRules(populatedGrid, countedGrid);
+        
+        let currentCellCount = countPopulation(populatedGrid);
+        cellCounts.push(currentCellCount);
+
+        printGridToApp(populatedGrid);
+        updateChart(generations, cellCounts);
     }
 }
+
+function startSimulation() {
+    grid = createGrid(25, 150);
+    populatedGrid = populateGrid(grid, sparseness);
+
+    generationCount = 0;
+    generations.length = 0;
+    cellCounts.length = 0;
+
+    printGridToApp(populatedGrid);
+    intervalId = setInterval(runGeneration, 100);
+}
+
 
 function printGridToApp(grid) {
     gridContainer.innerHTML = '';
@@ -144,7 +177,7 @@ function printGridToApp(grid) {
         for (let j = 0; j < grid[i].length; j++) {
             const td = document.createElement('td');
             td.style.width = '20px';
-            td.style.height = '20px';
+            td.style.height = '10px';
             td.style.backgroundColor = grid[i][j] === 1 ? 'black' : 'white';
             tr.appendChild(td);
         }
@@ -154,35 +187,54 @@ function printGridToApp(grid) {
 }
 
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function updateChart(generations, numberOfAliveCells) {
+  const ctx = document.getElementById('aliveCellsChart').getContext('2d');
+  
+  // If the chart instance doesn't exist, create it
+  if (!aliveCellsChart) {
+    aliveCellsChart = new Chart(ctx, {
+      type: 'line', // A line chart to show the trend over generations
+      data: {
+        labels: generations, // X-axis labels
+        datasets: [{
+          label: 'Number of Alive Cells',
+          data: numberOfAliveCells, // Y-axis data
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true // Y-axis should start at 0
+          },
+          x: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  } else {
+    aliveCellsChart.data.labels = generations;
+    aliveCellsChart.data.datasets[0].data = numberOfAliveCells;
+    aliveCellsChart.update();
+  }
 }
 
-
-async function main() {
-
-    // Create empty grid and then populate it with seed
-    const grid = createGrid(25, 150);
-    let populatedGrid = populateGrid(grid);
-    
-    const generations = 10000;
-
-    for (let i = 0; i < generations; i++) {
-        printGridToApp(populatedGrid);
-        console.log(`Generation ${i}`)
-        await sleep(10);
-
-        let countedGrid = countNeighbours(populatedGrid);
-        populatedGrid = applyRules(populatedGrid, countedGrid);
-
-    }
-    printGridToApp(populatedGrid);
-
-}
-
+// Global Variables
 let gridContainer;
+let populatedGrid;
+let intervalId;
+let sparseness = 0.5;
+let isPaused = false;
+let aliveCellsChart;
+let generationCount = 0;
+let generations = [];
+let cellCounts = [];
 
-document.addEventListener('DOMContentLoaded', (event) => {
+
+document.addEventListener('DOMContentLoaded', () => {
     gridContainer = document.getElementById('grid');
-    main();
+    startSimulation();
 });
