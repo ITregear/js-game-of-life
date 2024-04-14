@@ -160,11 +160,11 @@ function runGeneration() {
         let currentCellCount = countPopulation(populatedGrid);
         generationCount += 1;
 
-        cellCounts.push(currentCellCount);
-        generations.push(generationCount);
+        arrayOfGenerations[arrayOfGenerations.length - 1].push(generationCount);
+        arrayOfCellCounts[arrayOfCellCounts.length - 1].push(currentCellCount);
 
         printGridToApp(populatedGrid);
-        updateChart(generations, cellCounts);
+        updateChart();
     }
 }
 
@@ -185,8 +185,8 @@ function startSimulation(gridSizeX, gridSizeY, refreshRate) {
 function handleResetEvent() {
 
     generationCount = 0;
-    generations.length = 0;
-    cellCounts.length = 0;
+    arrayOfGenerations.push([]);
+    arrayOfCellCounts.push([]);
 
     startSimulation(gridSizeX, gridSizeY, refreshRate);
 
@@ -215,10 +215,8 @@ function printGridToApp(grid) {
 }
 
 
-function updateChart(generations, numberOfAliveCells) {
+function updateChart() {
     const ctx = document.getElementById('aliveCellsChart').getContext('2d');
-
-    console.log("func start");
 
     // Function to generate random RGB colors
     function getRandomColor() { // Make sure this function name is consistent
@@ -228,22 +226,27 @@ function updateChart(generations, numberOfAliveCells) {
         return `rgb(${r}, ${g}, ${b})`;
     }
 
+    console.log(arrayOfGenerations);
+    console.log(arrayOfCellCounts);
+
     if (!window.populationChart) {
-        console.log("init");
         // Construct the datasets using the alive cell counts
-        const datasets = [{
-            label: 'Number of Alive Cells',
-            data: numberOfAliveCells,
-            fill: false,
-            borderColor: getRandomColor(),
-            tension: 0.1
-        }];
+        const datasets = arrayOfGenerations.map((genArray, index) => {
+            return {
+                label: `Run ${index + 1}`,
+                data: arrayOfCellCounts[index],
+                fill: false,
+                borderColor: getRandomColor(),
+            };
+        });
+
+        const longestGenArray = arrayOfGenerations.reduce((a, b) => a.length > b.length ? a : b, []);
 
         // Construct the chart with the datasets and labels
         window.populationChart = new Chart(ctx, {
             type: 'line',
             data: {
-                label: generations,
+                label: longestGenArray,
                 datasets: datasets
             },
             options: {
@@ -259,13 +262,20 @@ function updateChart(generations, numberOfAliveCells) {
             }
         });
     } else {
-        // Update the chart's dataset with new data and labels
-        window.populationChart.data.labels = generations;
-        window.populationChart.data.datasets[0].data = numberOfAliveCells;
+        const longestGenArray = arrayOfGenerations.reduce((a, b) => a.length > b.length ? a : b, []);
+
+        window.populationChart.data.labels = longestGenArray;
+        window.populationChart.data.datasets = arrayOfGenerations.map((genArray, index) => {
+            return {
+                label: `Run ${index + 1}`,
+                data: arrayOfCellCounts[index],
+                fill: false,
+                borderColor: getRandomColor()
+            };
+        });
         window.populationChart.update();
     }
 }
-
 
 // Global Variables
 let gridContainer;
@@ -273,8 +283,9 @@ let populatedGrid;
 let sparseness = 0.5;
 let isPaused = false;
 let generationCount = 0;
-let generations = [];
-let cellCounts = [];
+
+let arrayOfGenerations = [[]];
+let arrayOfCellCounts = [[]];
 
 gridSizeX = 150;
 gridSizeY = 25;
