@@ -33,12 +33,12 @@ function createGrid(rows, cols) {
 function populateGrid(emptyGrid, sparseness = 0.5) {
 
     // Accepts empty (or populated) grid, and creates a new grid with randomly populated 0 or 1
-    
+
     const populatedGrid = createGrid(emptyGrid.length, emptyGrid[0].length);
 
     for (let i = 0; i < populatedGrid.length; i++) {
         for (let j = 0; j < populatedGrid[i].length; j++) {
-            populatedGrid[i][j] = Math.random() < sparseness ? 1 : 0; 
+            populatedGrid[i][j] = Math.random() < sparseness ? 1 : 0;
         }
     }
     return populatedGrid;
@@ -46,6 +46,7 @@ function populateGrid(emptyGrid, sparseness = 0.5) {
 
 
 function countNeighbours(populatedGrid) {
+
     // Accepts a populated grid, and counts number of neighbours per cell
     // Returns a new grid with neighbour count per cell
 
@@ -77,6 +78,9 @@ function countNeighbours(populatedGrid) {
 
 function countPopulation(populatedGrid) {
 
+    // Counts the entire population in the grid
+    // Returns an integer
+
     let totalCount = 0;
 
     for (let i = 0; i < populatedGrid.length; i++) {
@@ -90,6 +94,7 @@ function countPopulation(populatedGrid) {
 
 
 function applyRules(populatedGrid, countedGrid) {
+
     /*
     Rules:
     for each cell c:
@@ -110,7 +115,7 @@ function applyRules(populatedGrid, countedGrid) {
 
     for (let i = 0; i < populatedGrid.length; i++) {
         for (let j = 0; j < populatedGrid[0].length; j++) {
-            
+
             // Assume current cell dies unless rule keeps it alive
             let currentState = populatedGrid[i][j];
             let currentNeighbourCount = countedGrid[i][j];
@@ -141,35 +146,58 @@ function applyRules(populatedGrid, countedGrid) {
 
 
 function runGeneration() {
+
+    // Keeps track of generation number as well as population count
+    // Updates grid and applies rules to calculate new grid
+    // Calls printGridToApp() which renders the population
+    // Calls updateChart() to update the chart of population versus generation
+
     if (!isPaused) {
-        generationCount += 1;
-        generations.push(generationCount);
-        
+
         let countedGrid = countNeighbours(populatedGrid);
         populatedGrid = applyRules(populatedGrid, countedGrid);
-        
+
         let currentCellCount = countPopulation(populatedGrid);
+        generationCount += 1;
+
         cellCounts.push(currentCellCount);
+        generations.push(generationCount);
 
         printGridToApp(populatedGrid);
         updateChart(generations, cellCounts);
     }
 }
 
-function startSimulation() {
-    grid = createGrid(25, 150);
+function startSimulation(gridSizeX, gridSizeY, refreshRate) {
+
+    // Creates a new grid with rows = gridSizeX, cols = gridSizeY
+    // Prints initial grid to begin simulation
+    // Runs simulation at desired refreshRate
+
+    grid = createGrid(gridSizeY, gridSizeX);
     populatedGrid = populateGrid(grid, sparseness);
+
+    printGridToApp(populatedGrid);
+    intervalId = setInterval(runGeneration, 1000 / refreshRate);
+}
+
+
+function handleResetEvent() {
 
     generationCount = 0;
     generations.length = 0;
     cellCounts.length = 0;
 
-    printGridToApp(populatedGrid);
-    intervalId = setInterval(runGeneration, 100);
+    startSimulation(gridSizeX, gridSizeY, refreshRate);
+
 }
 
 
 function printGridToApp(grid) {
+
+    // Renders grid as grid HTML element
+    // Black if alive, white if dead
+
     gridContainer.innerHTML = '';
     const table = document.createElement('table');
     for (let i = 0; i < grid.length; i++) {
@@ -177,7 +205,7 @@ function printGridToApp(grid) {
         for (let j = 0; j < grid[i].length; j++) {
             const td = document.createElement('td');
             td.style.width = '20px';
-            td.style.height = '10px';
+            td.style.height = '5px';
             td.style.backgroundColor = grid[i][j] === 1 ? 'black' : 'white';
             tr.appendChild(td);
         }
@@ -188,53 +216,69 @@ function printGridToApp(grid) {
 
 
 function updateChart(generations, numberOfAliveCells) {
-  const ctx = document.getElementById('aliveCellsChart').getContext('2d');
-  
-  // If the chart instance doesn't exist, create it
-  if (!aliveCellsChart) {
-    aliveCellsChart = new Chart(ctx, {
-      type: 'line', // A line chart to show the trend over generations
-      data: {
-        labels: generations, // X-axis labels
-        datasets: [{
-          label: 'Number of Alive Cells',
-          data: numberOfAliveCells, // Y-axis data
-          fill: false,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true // Y-axis should start at 0
-          },
-          x: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  } else {
-    aliveCellsChart.data.labels = generations;
-    aliveCellsChart.data.datasets[0].data = numberOfAliveCells;
-    aliveCellsChart.update();
-  }
+    const ctx = document.getElementById('aliveCellsChart').getContext('2d');
+
+    // Function to generate random RGB colors
+    function getRandomColor() { // Make sure this function name is consistent
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    if (!window.aliveCellsChart) {
+        // Construct the datasets using the alive cell counts
+        const datasets = [{
+            label: 'Number of Alive Cells',
+            data: numberOfAliveCells,
+            fill: false,
+            borderColor: getRandomColor() // Use the same function name as defined above
+        }];
+
+        // Construct the chart with the datasets and labels
+        window.aliveCellsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: generations,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        });
+    } else {
+        // Update the chart's dataset with new data and labels
+        window.aliveCellsChart.data.labels = generations;
+        window.aliveCellsChart.data.datasets[0].data = numberOfAliveCells;
+        window.aliveCellsChart.update();
+    }
 }
+
+
 
 // Global Variables
 let gridContainer;
 let populatedGrid;
-let intervalId;
 let sparseness = 0.5;
 let isPaused = false;
-let aliveCellsChart;
 let generationCount = 0;
+let currentRunIndex = 0;
 let generations = [];
 let cellCounts = [];
 
+gridSizeX = 150;
+gridSizeY = 25;
+refreshRate = 10;
 
 document.addEventListener('DOMContentLoaded', () => {
     gridContainer = document.getElementById('grid');
-    startSimulation();
+    startSimulation(gridSizeX, gridSizeY, refreshRate);
 });

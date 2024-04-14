@@ -4,6 +4,7 @@ body {
     color: white; /* Light text */
     font-family: Arial, sans-serif; /* Modern font */
     text-align: center; /* Center aligns all content */
+    font-size: medium;
   }
   
   /* Style the grid container */
@@ -41,7 +42,7 @@ body {
     -webkit-appearance: none; /* Override default appearance */
     width: 50%; /* Set a width to the slider */
     margin: 20px 0; /* Margin around the slider */
-    background-color: #333; /* Slider background */
+    background-color: #555; /* Slider background */
     border-radius: 20px;
   }
   
@@ -70,15 +71,15 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    margin: 20px;
 }
 
 .controls {
     flex-basis: 30%; /* Takes up 30% of the flex container's space */
-    flex: 1;
+    min-width: 30%;
     display: flex;
     flex-direction: column;
     align-items: center; /* Center align controls */
+    vertical-align: center;
     padding: 10px;
     background: #333; /* Optional: adds background color */
     border-radius: 10px;
@@ -86,10 +87,10 @@ body {
 }
 
 #aliveCellsChart {
-    flex: 2;
     flex-basis: 70%; /* Takes up the rest 70% of the space */
     padding: 5px;
     background: #555; /* Optional: adds background color */
     border-radius: 10px;
-    max-width: 90%;
+    max-width: 70%;
+    max-height: fit-content;
 }

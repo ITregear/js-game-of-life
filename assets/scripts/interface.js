@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    /*
+    Runs once the content has loaded
+    Creates objects for the user inputs (buttons and sliders)
+    Runs functions depending on which button is pressed
+    */
+
     const pauseButton = document.getElementById('pauseBtn');
     const resetButton = document.getElementById('resetBtn');
     const sparsenessSlider = document.getElementById('sparsenessSlider');
@@ -9,11 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     resetButton.addEventListener('click', () => {
-        startSimulation();
+        handleResetEvent();
     });
     
     sparsenessSlider.addEventListener('input', (event) => {
-        // Update the global sparseness variable
         sparseness = parseFloat(event.target.value);
     });
     
