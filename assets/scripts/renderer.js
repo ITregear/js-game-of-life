@@ -216,6 +216,12 @@ function printGridToApp(grid) {
 
 
 function updateChart() {
+
+    // Updates the chart, and renders it in the canvas element with the aliveCellsChart ID
+    // If the chart doesn't exist, it is created
+    // Plots a new line for each row in the arrayOfGenerations, arrayOfCellCounts 2D arrays
+    // Each new row gets a random colour
+
     const ctx = document.getElementById('aliveCellsChart').getContext('2d');
 
     // Function to generate random RGB colors
@@ -230,7 +236,7 @@ function updateChart() {
     console.log(arrayOfCellCounts);
 
     if (!window.populationChart) {
-        // Construct the datasets using the alive cell counts
+        
         const datasets = arrayOfGenerations.map((genArray, index) => {
             return {
                 label: `Run ${index + 1}`,
@@ -242,7 +248,6 @@ function updateChart() {
 
         const longestGenArray = arrayOfGenerations.reduce((a, b) => a.length > b.length ? a : b, []);
 
-        // Construct the chart with the datasets and labels
         window.populationChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -252,12 +257,60 @@ function updateChart() {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Population',
+                            color: 'white',
+                            font: {
+                                size: 20
+                            },
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Generations',
+                            color: 'white',
+                            font: {
+                                size: 20
+                            },
+                        }
                     }
                 },
-                legend: {
-                    display: true,
-                    position: 'top'
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: "Population Count versus Time",
+                        color: 'white',
+                        font: {
+                            size: 20
+                        },
+                        padding: {
+                            top: 5,
+                            bottom: 5
+                        }
+                    }
+                },
+                animation: {
+                    duration: 0
                 }
             }
         });
@@ -269,8 +322,7 @@ function updateChart() {
             return {
                 label: `Run ${index + 1}`,
                 data: arrayOfCellCounts[index],
-                fill: false,
-                borderColor: getRandomColor()
+                fill: false
             };
         });
         window.populationChart.update();

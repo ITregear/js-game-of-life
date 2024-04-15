@@ -12,14 +12,6 @@ body {
     margin: 20px auto; /* Centering the grid and adding some margin */
   }
   
-  /* Styling for the buttons and sliders */
-  .controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
   /* Individual button styling */
   button {
     background-color: #333; /* Darker grey background */
@@ -71,10 +63,14 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
+    padding-left: 20px;
+    padding-right: 20px;
+    max-height: 350px;
 }
 
 .controls {
     flex-basis: 30%; /* Takes up 30% of the flex container's space */
+    height: 330px;
     min-width: 30%;
     display: flex;
     flex-direction: column;
